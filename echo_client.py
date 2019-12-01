@@ -1,3 +1,7 @@
+"""
+The client program
+"""
+
 import socket
 import sys
 import traceback
@@ -5,13 +9,18 @@ import traceback
 SERVER = 'localhost'
 PORT = 10000
 
+
 def client(msg, log_buffer=sys.stderr):
+    """ The client function """
     server_address = (SERVER, PORT)
     data_chunk = 16
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
+    sock = socket.socket(socket.AF_INET,
+                         socket.SOCK_STREAM,
+                         socket.IPPROTO_TCP)
     sock.settimeout(2)
 
-    print('connecting to {0} port {1}'.format(*server_address), file=log_buffer)
+    print('connecting to {0} port {1}'.format(*server_address),
+          file=log_buffer)
     sock.connect(server_address)
 
     # entire message
@@ -28,14 +37,14 @@ def client(msg, log_buffer=sys.stderr):
             received_message += chunk.decode('ascii')
             print('received "{0}" len {1}'.format(chunk.decode('utf8'),
                                                   len(chunk)),
-                                          file=log_buffer)
+                  file=log_buffer)
 
-            if not chunk or len(chunk) == 0:
+            if not chunk:
                 break
 
     except socket.timeout:
         print('message end')
-    except Exception:
+    except socket.error:
         traceback.print_exc()
         print("Exception {}".format(sys.exc_info()[0]))
         sys.exit(1)
@@ -45,11 +54,12 @@ def client(msg, log_buffer=sys.stderr):
 
     return received_message
 
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        usage = '\nusage: python echo_client.py "this is my message"\n'
-        print(usage, file=sys.stderr)
+        USAGE = '\nusage: python echo_client.py "this is my message"\n'
+        print(USAGE, file=sys.stderr)
         sys.exit(1)
 
-    msg = sys.argv[1]
-    client(msg)
+    MSG = sys.argv[1]
+    client(MSG)
